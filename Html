@@ -1,0 +1,72 @@
+export default {
+  async fetch(request) {
+    const userAgent = request.headers.get("User-Agent") || "";
+    
+    // Pastefy raw script URL
+    const realScriptUrl = "https://pastefy.app/uzhwP5jn/raw";
+
+    // Agar normal browser khol raha ho
+    const isBrowser = /Mozilla|Chrome|Safari|Edge|Firefox|Android/i.test(userAgent);
+
+    if (isBrowser) {
+      const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Protected</title>
+          <style>
+              body {
+                  background-color: #0b0b0d;
+                  color: #e5e5e5;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                  margin: 0;
+                  font-family: monospace;
+                  text-align: center;
+                  padding: 15px;
+                  box-sizing: border-box;
+              }
+              h1 {
+                  font-size: 1.25rem;
+                  font-weight: 500;
+                  margin-bottom: 20px;
+                  letter-spacing: 0.5px;
+              }
+              p {
+                  color: #8c8c8e;
+                  font-size: 0.85rem;
+                  word-break: break-all;
+                  max-width: 480px;
+                  line-height: 1.5;
+              }
+          </style>
+      </head>
+      <body>
+          <h1>This file is protected.</h1>
+          <p>loadstring(game:HttpGet("${request.url}"))()</p>
+      </body>
+      </html>
+      `;
+
+      return new Response(htmlContent, {
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      });
+    }
+
+    // Roblox executor ke liye direct script load hogi
+    const scriptResponse = await fetch(realScriptUrl);
+    const scriptCode = await scriptResponse.text();
+
+    return new Response(scriptCode, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache",
+      },
+    });
+  },
+};
