@@ -3,8 +3,7 @@ const app = express();
 app.use(express.json());
 
 app.get('/loader', (req, res) => {
-    const mySecureString = `loadstring(game:HttpGet("https://pastefy.app"))()`;
-    res.send(mySecureString);
+    res.send(`loadstring(game:HttpGet("https://pastefy.app"))()`);
 });
 
 app.post('/heartbeat', (req, res) => {
